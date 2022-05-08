@@ -2,6 +2,7 @@
 #
 # Install gpac
 # Install touch screen driver:
+# add "bash ~/record_video.sh" to .profile
 while true; do
   ans=$(zenity --info --title 'Record a video' \
       --text 'Choose video duration in minutes' \
@@ -42,6 +43,6 @@ VLENGTH=$((ans * 60000))
 
 raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -o ~/Videos/bees_${FNUMBER}.h264
 MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4
-#zenity --info --text="Recording video"
+zenity --info --text="Recording video"
 
 done
