@@ -43,9 +43,10 @@ VLENGTH=$((ans * 60000))
 
 raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -o ~/Videos/bees_${FNUMBER}.h264 & \
     ( for i in `seq 1 100`; do echo $i ; echo "#Recording $ans minutes. Progress: $i %";  sleep $((ans * 60 / 100)); done ) \
-    | yad --progress --center --borders=20 --button "Cancel video recording":"killall raspivid"
+    | yad --progress --center --borders=20 --button 'Cancel video recording:killall raspivid & killalll yad'
 
-MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4
+MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4 && \
+    yad --info --text "Video converted to mp4" --title="Info" --button="OK" --borders=20 --center
 # zenity --info --text="Recording video" --display=:0.0
 
 done
