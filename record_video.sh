@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Install gpac
+# Install gpac yad
 # Install touch screen driver:
 # add "bash ~/record_video.sh" to .profile
 while true; do
@@ -10,7 +10,7 @@ while true; do
       --extra-button 30 \
       --extra-button 10 \
       --extra-button 5 \
-      --extra-button 1 \
+      --extra-button 2 \
       --extra-button "Power off" \
        )
 
@@ -41,8 +41,11 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -o ~/Videos/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -o ~/Videos/bees_${FNUMBER}.h264 & \
+    ( for i in `seq 1 100`; do echo $i ; echo "#Recording $ans minutes. Progress: $i %";  sleep $((ans * 60 / 100)); done ) \
+    | yad --progress --center --borders=20 --button "Cancel video recording":"killall raspivid"
+
 MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4
-zenity --info --text="Recording video"
+# zenity --info --text="Recording video" --display=:0.0
 
 done
