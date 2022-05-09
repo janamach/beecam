@@ -43,8 +43,8 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --timeout=$((ans * 60 + 3)) --borders=20 --button 'Cancel video recording:killall raspivid & killall yad'  & \
-raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -p 10,10,160,90 -o ~/Videos/bees_${FNUMBER}.h264 && \
+yad --timeout-indicator=top --posx=120 --posy=230 --timeout=$((ans * 60 + 5)) --borders=20 --button 'Cancel video recording:killall raspivid & killall yad'  & \
+raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -p 48,0,400,225 -o ~/Videos/bees_${FNUMBER}.h264
 
 MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4 && \
     yad --info --text "Video converted to mp4" --title="Info" --button="OK" --borders=20 --center
