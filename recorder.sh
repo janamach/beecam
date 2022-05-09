@@ -1,8 +1,11 @@
 #!/bin/bash
 #
 # Install gpac yad
-# Install touch screen driver:
-# add "bash ~/record_video.sh" to .profile
+# add "bash ~/recorder.sh" to .profile
+# Install touch screen driver: git clone https://github.com/waveshare/LCD-show.git
+#                              ./LCD4-show
+# More here:                   https://spotpear.com/index/study/detail/id/141.html
+
 while true; do
   ans=$(zenity --info --title 'Record a video' \
       --text 'Choose video duration in minutes' \
