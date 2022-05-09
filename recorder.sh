@@ -4,7 +4,7 @@
 # add "bash ~/recorder.sh" to .profile
 # Install SD card from here: https://spotpear.com/index/study/detail/id/141.html
 # Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
-# Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'wheezy'
+# Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'stretch'
 
 while true; do
   ans=$(zenity --info --title 'Record a video' \
