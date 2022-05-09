@@ -2,9 +2,8 @@
 #
 # Install gpac yad
 # add "bash ~/recorder.sh" to .profile
-# Install touch screen driver: git clone https://github.com/waveshare/LCD-show.git
-#                              ./LCD4-show
-# More here:                   https://spotpear.com/index/study/detail/id/141.html
+# Install SD card from here: https://spotpear.com/index/study/detail/id/141.html
+# Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
 
 while true; do
   ans=$(zenity --info --title 'Record a video' \
@@ -44,7 +43,7 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -o ~/Videos/bees_${FNUMBER}.h264 & \
+raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -p 10,10,160,90 -o ~/Videos/bees_${FNUMBER}.h264 & \
     ( for i in `seq 1 100`; do echo $i ; echo "#Recording $ans minutes. Progress: $i %";  sleep $((ans * 60 / 100)); done ) \
     | yad --progress --center --borders=20 --button 'Cancel video recording:killall raspivid & killalll yad'
 
