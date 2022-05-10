@@ -10,20 +10,22 @@ while true; do
   ans=$(zenity --info --title 'Record a video' \
       --text 'Choose video duration in minutes' \
       --ok-label Quit \
+      --extra-button 90 \
       --extra-button 30 \
-      --extra-button 10 \
       --extra-button 1 \
-      --extra-button "Power off" \
+      --extra-button "Focus 10s" \
        )
 
 ### Quit if "Quit" is pressed
 re='^[0-9]+$'
 
 if ! [[ $ans =~ $re ]] ; then
-    if [[ $ans = "Power off" ]] ; then
-        echo "Power off"; poweroff; exit 1
+    if [[ $ans = "Focus 10s" ]] ; then
+        raspivid -t 10000 -w 1920 -h 1080 --roi 0.5,0.5,0.25,0.25
+	bash ~/recorder.sh
+        exit 1
     else
-        echo "Quitting ..." >&2; exit 1
+        exit 1
     fi
 fi
 
@@ -48,6 +50,5 @@ raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps 30 -w 1920 -h 1080 -p 48,0,400,2
 
 MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=29.997 ~/Videos/bees_${FNUMBER}.mp4 && \
     yad --info --text "Video converted to bees_${FNUMBER}.mp4" --title="Info" --button="OK" --borders=20 --center
-# zenity --info --text="Recording video" --display=:0.0
 
 done
