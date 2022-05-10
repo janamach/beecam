@@ -2,6 +2,7 @@
 #
 # Install gpac yad
 # add "bash ~/recorder.sh" to .profile
+# add "yad --info --center --button="Poweroff":"poweroff" --borders 20" to .profile
 # Install SD card from here: https://spotpear.com/index/study/detail/id/141.html
 # Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
 # Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'stretch'
