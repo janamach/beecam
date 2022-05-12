@@ -12,34 +12,43 @@
 
 # Edit for video settings
 
-fps=30
-video_width=1920
-video_height=1080
+fps=90
+video_width=640
+video_height=480
+bitrate=15000000
 
 convert_to_mp4=true
-mp4_fps=fps
+mp4_fps=$fps
 
 # Edit for file numbering
-count_from=1000
+# count_from=1000
 
-focus_preview () {
-    raspivid -t 10000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 
-}
+main () {
+while true; do
+  ans=$(zenity --info --title 'Record a video' \
+      --text 'Choose video duration in minutes' \
+      --ok-label Quit \
+      --extra-button 90 \
+      --extra-button 30 \
+      --extra-button 1 \
+      --extra-button "Focus" \
+       )
 
-video_frame () {
-     raspivid -t 10000 -sa -100 -w ${video_width} -h ${video_height} -p 0,0,480,270
-}
+### Quit if "Quit" is pressed
+re='^[0-9]+$'
 
-preview () {
-    focus_preview & yad --info --timeout=100 --posy=250 \
-                --button="Close"
-                --button="Focus":"killall raspivid && bash -c focus_preview" \
-                --button="Video preview":"killall raspivid && bash -c video_frame"
-}
+if ! [[ $ans =~ $re ]] ; then
+    if [[ $ans = "Focus" ]] ; then
+        raspivid -t 100000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 & \
+        yad --info --timeout=100 --posy=273 \
+            --button="Close this window":"killall raspivid & killall yad"
+        main
+        break
+    else
+        break
+    fi
+fi
 
-
-
-record_video () {
 ### Create "count" file for counting if does not exist
 if [ -f count ]; then
     echo "count file exists."
@@ -56,37 +65,26 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=120 --posy=230 \
+yad --timeout-indicator=top --posx=120 --posy=225 \
     --timeout=$((ans * 60 + 5)) --borders=20 \
     --text="Recording bees_${FNUMBER}.h264" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,270 -t ${VLENGTH} -o ~/Videos/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ~/Videos/bees_${FNUMBER}.h264
 
-if [ convert_to_mp4 ] ; then
+if $convert_to_mp4 ; then
     MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
     yad --info --text "Video converted to bees_${FNUMBER}.mp4" --title="Info" --button="OK" --borders=20 --center
 fi
-}
 
-main () {
-  killall raspivid
-  yad --info --title 'Record a video' \
-      --text 'Choose video duration in minutes' \
-      --button="Quit":"exit 1" \
-      --button="90":"ans=90 ; record_video" \
-      --button="30":"ans=30" \
-      --button="1":"ans=1" \
-      --button="Preview":"bash -c preview"
+done
 }
 
 export -f main
-export -f focus_preview
-export -f video_frame
-export -f preview
-export -f record_video
 
-main
-
-yad --info --center --button="Poweroff":"poweroff" --button="Back":main --button="Exit":"exit 1" --borders=20
-
+while true; do
+    main
+    yad --info --center --borders=20 \
+        --button="Poweroff":"poweroff" \
+        --button="Back"
+done
