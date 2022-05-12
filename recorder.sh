@@ -16,6 +16,8 @@ fps=30
 video_width=1920
 video_height=1080
 
+convert_to_mp4=true
+
 # Edit for file numbering
 count_from=1000
 
@@ -35,6 +37,7 @@ re='^[0-9]+$'
 if ! [[ $ans =~ $re ]] ; then
     if [[ $ans = "Focus 10s" ]] ; then
         raspivid -t 10000 -w 1920 -h 1080 --roi 0.5,0.5,0.25,0.25
+	#########################
 	bash ~/recorder.sh
         exit 1
     else
@@ -65,8 +68,9 @@ yad --timeout-indicator=top --posx=120 --posy=230 \
 
 raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 48,0,400,225 -o ~/Videos/bees_${FNUMBER}.h264
 
-MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${fps} ~/Videos/bees_${FNUMBER}.mp4 && \
-
-yad --info --text "Video converted to bees_${FNUMBER}.mp4" --title="Info" --button="OK" --borders=20 --center
+if convert_to_mp4 ; then
+    MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${fps} ~/Videos/bees_${FNUMBER}.mp4 && \
+    yad --info --text "Video converted to bees_${FNUMBER}.mp4" --title="Info" --button="OK" --borders=20 --center
+fi
 
 done
