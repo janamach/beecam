@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# Install gpac yad
+# add "bash ~/recorder.sh" to .profile
+# add "yad --info --center --button="Poweroff":"poweroff" --borders 20" to .profile
+# Install SD card from here: https://spotpear.com/index/study/detail/id/141.html
+# Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
+# Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'stretch'
+# To  deisable bluetooth and wifi, add this to '/boot/config.txt':
+# dtoverlay=pi3-disable-wifi
+# dtoverlay=pi3-disable-bt
+
+# Edit for video settings
+
+fps=30
+video_width=1920
+video_height=1080
+
+convert_to_mp4=true
+mp4_fps=fps
+
+# Edit for file numbering
+count_from=1000
+
+focus_preview () {
+    raspivid -t 10000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 
+}
+
+video_frame () {
+     raspivid -t 10000 -sa -100 -w ${video_width} -h ${video_height} -p 0,0,480,270
+}
+
+preview () {
+    focus_preview & yad --info --timeout=100 --posy=250 \
+                --button="Close"
+                --button="Focus":"killall raspivid && bash -c focus_preview" \
+                --button="Video preview":"killall raspivid && bash -c video_frame"
+}
+
+
+
+record_video () {
+### Create "count" file for counting if does not exist
+if [ -f count ]; then
+    echo "count file exists."
+else
+    echo "count file does not exist. Creating ..."
+    echo ${count_from} > count
+fi
+
+### Add 1 to count
+FNUMBER=$(< count)
+FNUMBER=$((FNUMBER + 1))
+echo ${FNUMBER} > count
+
+VLENGTH=$((ans * 60000))
+# echo ${VLENGTH} > ans
+
+yad --timeout-indicator=top --posx=120 --posy=230 \
+    --timeout=$((ans * 60 + 5)) --borders=20 \
+    --text="Recording bees_${FNUMBER}.h264" \
+    --button 'Cancel video recording:killall raspivid & killall yad'  & \
+
+raspivid -t ${VLENGTH} -b 1500000 -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,270 -t ${VLENGTH} -o ~/Videos/bees_${FNUMBER}.h264
+
+if [ convert_to_mp4 ] ; then
+    MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
+    yad --info --text "Video converted to bees_${FNUMBER}.mp4" --title="Info" --button="OK" --borders=20 --center
+fi
+}
+
+main () {
+  killall raspivid
+  yad --info --title 'Record a video' \
+      --text 'Choose video duration in minutes' \
+      --button="Quit":"exit 1" \
+      --button="90":"ans=90 ; record_video" \
+      --button="30":"ans=30" \
+      --button="1":"ans=1" \
+      --button="Preview":"bash -c preview"
+}
+
+export -f main
+export -f focus_preview
+export -f video_frame
+export -f preview
+export -f record_video
+
+main
+
+yad --info --center --button="Poweroff":"poweroff" --button="Back":main --button="Exit":"exit 1" --borders=20
