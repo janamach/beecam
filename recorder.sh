@@ -2,13 +2,12 @@
 #
 # Install gpac yad
 # add "bash ~/recorder.sh" to .profile
-# add "yad --info --center --button="Poweroff":"poweroff" --borders 20" to .profile
 # Install SD card from here: https://spotpear.com/index/study/detail/id/141.html
-# Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
-# Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'stretch'
-# To  deisable bluetooth and wifi, add this to '/boot/config.txt':
-# dtoverlay=pi3-disable-wifi
-# dtoverlay=pi3-disable-bt
+### Do 'sudo nano /etc/apt/sources.list' and uncomment 'deb-src ...'
+### Do 'sudo nano /etc/apt/apt.conf.d/10defaultRelease' and replace 'stable' with 'stretch'
+### To  deisable bluetooth and wifi, add this to '/boot/config.txt':
+### dtoverlay=pi3-disable-wifi
+### dtoverlay=pi3-disable-bt
 
 # Edit for video settings
 
@@ -21,7 +20,7 @@ convert_to_mp4=true
 mp4_fps=$fps
 
 # Edit for file numbering
-# count_from=1000
+count_from=1000
 
 main () {
 while true; do
