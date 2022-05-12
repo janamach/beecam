@@ -35,9 +35,9 @@ while true; do
 re='^[0-9]+$'
 
 if ! [[ $ans =~ $re ]] ; then
-    if [[ $ans = "Focus 10s" ]] ; then
-        raspivid -t 10000 -w 1920 -h 1080 --roi 0.5,0.5,0.25,0.25
-	#########################
+    if [[ $ans = "Focus" ]] ; then
+        raspivid -t 100000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 & \
+	yad --info --timeout=100 --button="X":"bash ~/recorder.sh & exit 1" ## Maybe &&
 	bash ~/recorder.sh
         exit 1
     else
