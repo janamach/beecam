@@ -12,9 +12,9 @@
 # Edit for video settings
 
 fps=90
-video_width=640
-video_height=480
-bitrate=15000000
+video_width=1920
+video_height=1080
+bitrate=1500000
 
 convert_to_mp4=true
 mp4_fps=$fps
