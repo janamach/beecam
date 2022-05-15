@@ -75,7 +75,7 @@ if $convert_to_mp4 ; then
     MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
     yad --info --text "<big><big><big>Video converted to \n\nbees_${FNUMBER}.mp4</big></big></big>" \
         --title="Info" \ 
-        --button="<big><big><big>OK</big></big></big>" --borders=20 --center        
+        --button="OK" --borders=20 --center        
 fi
 done
 }
