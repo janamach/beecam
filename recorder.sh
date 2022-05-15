@@ -74,10 +74,9 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h $
 if $convert_to_mp4 ; then
     MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
     yad --info --text "<big><big><big>Video converted to \n\n<span font_weight='bold'>bees_${FNUMBER}.mp4</span></big></big></big>" \
-        --title="Info" \
-        
-        --button="<big><big><big><span font_weight='bold'>OK</span></big></big></big>" --borders=20 --center \fi
-
+        --title="Info" \ 
+        --button="<big><big><big><span font_weight='bold'>OK</span></big></big></big>" --borders=20 --center        
+fi
 done
 }
 
