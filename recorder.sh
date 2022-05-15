@@ -66,16 +66,16 @@ VLENGTH=$((ans * 60000))
 
 yad --timeout-indicator=top --posx=120 --posy=225 \
     --timeout=$((ans * 60 + 5)) --borders=20 \
-    --text="Recording <span font_weight='bold'>bees_${FNUMBER}.h264</span>" \
+    --text="Recording bees_${FNUMBER}.h264" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
 raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ~/Videos/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
     MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
-    yad --info --text "<big><big><big>Video converted to \n\n<span font_weight='bold'>bees_${FNUMBER}.mp4</span></big></big></big>" \
+    yad --info --text "<big><big><big>Video converted to \n\nbees_${FNUMBER}.mp4</big></big></big>" \
         --title="Info" \ 
-        --button="<big><big><big><span font_weight='bold'>OK</span></big></big></big>" --borders=20 --center        
+        --button="<big><big><big>OK</big></big></big>" --borders=20 --center        
 fi
 done
 }
@@ -85,6 +85,6 @@ export -f main
 while true; do
     main
     yad --info --center --borders=20 \
-        --button="Poweroff":"<big><span font_weight='bold'>poweroff</span></big>" \
+        --button="Poweroff":"<big><big>poweroff</big></big>" \
         --button="Back"
 done
