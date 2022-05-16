@@ -6,13 +6,14 @@ fps=30
 bitrate=1500000
 convert_to_mp4=true
 mp4_fps=$fps
+ans=30
 
 # Edit for file numbering
 count_from=1000
 
 main () {
 while true; do
-  ans=$(zenity --info --title 'Record a video' \
+  ABCD=$(zenity --info --title 'Record a video' \
       --text 'Choose video option' \
       --ok-label Quit \
       --extra-button A \
@@ -21,16 +22,16 @@ while true; do
       --extra-button D \
        )
 
-if [[ $ans = "A" ]] ; then
+if [[ $ABCD = "A" ]] ; then
     video_width=1640
     video_height=1232
-elif [[ $ans = "B" ]] ; then
+elif [[ $ABCD = "B" ]] ; then
     video_width=1280
     video_height=720
-elif [[ $ans = "C" ]] ; then
+elif [[ $ABCD = "C" ]] ; then
     video_width=1920
     video_height=1080
-elif [[ $ans = "D" ]] ; then
+elif [[ $ABCD = "D" ]] ; then
     video_width=640
     video_height=480            
 else
