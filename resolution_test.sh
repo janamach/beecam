@@ -56,14 +56,14 @@ VLENGTH=$((30 * 60000))
 
 yad --timeout-indicator=top --posx=120 --posy=225 \
     --timeout=$((ans * 60 + 5)) --borders=20 \
-    --text="Recording ${ans}_${FNUMBER}.h264" \
+    --text="Recording ${ABCD}_${FNUMBER}.h264" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ~/Videos/${ans}_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ~/Videos/${ABCD}_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
-    MP4Box -add ~/Videos/${ans}_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/${ans}_${FNUMBER}.mp4 && \
-    yad --info --center --text "<big><big><big><big>Video converted to \n\n${ans}_${FNUMBER}.mp4</big></big></big></big>" \
+    MP4Box -add ~/Videos/${ABCD}_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/${ABCD}_${FNUMBER}.mp4 && \
+    yad --info --center --text "<big><big><big><big>Video converted to \n\n${ABCD}_${FNUMBER}.mp4</big></big></big></big>" \
         --title="Info" \
         --button="<big><big><big><big>OK</big></big></big></big>" --borders=20
 fi
