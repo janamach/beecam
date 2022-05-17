@@ -126,6 +126,5 @@ while true; do
     main
     yad --info --center --borders=20 \
         --button="<big><big><big><big>Poweroff</big></big></big></big>":"poweroff" \
-#        --button="<big><big><big><big>Copy mp4 to USB</big></big></big></big>":"copy_to_usb" \
         --button="<big><big><big><big>Back</big></big></big></big>"
 done
