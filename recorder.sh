@@ -60,6 +60,23 @@ else
     echo ${count_from} > count
 fi
 
+### Write into USB if available
+
+if [ -d $HOME/usb ]; then
+    echo "$HOME/usb exists"
+else
+    mkdir ~/usb
+fi
+
+if [ -b /dev/sd*1 ]; then
+    USB_DRIVE=$(echo /dev/sd*1)
+    sudo mount $USB_DRIVE $HOME/usb -o umask=000
+    VID_DIR=$HOME/usb
+    ls $VID_DIR
+else
+    VID_DIR=$HOME/Videos
+fi
+
 ### Add 1 to count
 FNUMBER=$(< count)
 FNUMBER=$((FNUMBER + 1))
@@ -68,27 +85,47 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=120 --posy=225 \
+yad --timeout-indicator=top --posx=60 --posy=220 \
     --timeout=$((ans * 60 + 5)) --borders=20 \
-    --text="Recording bees_${FNUMBER}.h264" \
+    --text="Recording ${VID_DIR}/bees_${FNUMBER}.h264" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ~/Videos/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ${VID_DIR}/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
-    MP4Box -add ~/Videos/bees_${FNUMBER}.h264:fps=${mp4_fps} ~/Videos/bees_${FNUMBER}.mp4 && \
+    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
     yad --info --center --text "<big><big><big><big>Video converted to \n\nbees_${FNUMBER}.mp4</big></big></big></big>" \
         --title="Info" \
         --button="<big><big><big><big>OK</big></big></big></big>" --borders=20
 fi
+
+sudo umount $HOME
+
 done
 }
 
 export -f main
 
+copy_to_usb() {
+if [ -b /dev/sd*1 ]; then
+    USB_DRIVE=$(echo /dev/sd*1)
+    sudo mount $USB_DRIVE $HOME/usb -o umask=000
+    yad --info --text="<big><big>Copying video files to USB drive.\nDo not unplug.</big></big>"
+    cp ~/Videos/*mp4 ~/usb
+    mkdir ~/Videos_${FNUMBER}
+    mv ~/Videos/*.* ~/Videos_${FNUMBER}
+    yad --info --text="<big><big>Copying complete. \n\nSafe to unplug.</big></big>"
+else
+    yad --info --text="No USB drive detected"
+fi
+}
+
+export -f copy_to_usb
+
 while true; do
     main
     yad --info --center --borders=20 \
         --button="<big><big><big><big>Poweroff</big></big></big></big>":"poweroff" \
+#        --button="<big><big><big><big>Copy mp4 to USB</big></big></big></big>":"copy_to_usb" \
         --button="<big><big><big><big>Back</big></big></big></big>"
 done
