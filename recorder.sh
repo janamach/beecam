@@ -85,12 +85,12 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=60 --posy=220 \
+yad --timeout-indicator=top --posx=60 --posy=220 --borders=10 \
     --timeout=$((ans * 60 + 5)) \
     --text="Recording ${VID_DIR}/bees_${FNUMBER}.h264" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,235 -o ${VID_DIR}/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,225 -o ${VID_DIR}/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
     MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
