@@ -85,9 +85,9 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=100 --posy=225 \
+yad --timeout-indicator=top --posx=80 --posy=225 \
     --timeout=$((ans * 60 + 5)) \
-    --text="  Recording ${VID_DIR}/bees_${FNUMBER}.h264  " \
+    --text="<big> Recording ${VID_DIR}/bees_${FNUMBER}.h264 </big>" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
 
 raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,225 -o ${VID_DIR}/bees_${FNUMBER}.h264
@@ -127,6 +127,6 @@ while true; do
     yad --info --center --borders=20 \
         --button="<big><big><big><big>Poweroff</big></big></big></big>":"poweroff" \
         --button="<big><big><big><big>Back</big></big></big></big>" \
-        --button="<big><big><big><big>Reboot</big></big></big></big>":"reboot" \
+        --button="<big><big><big><big>Reboot</big></big></big></big>":"reboot"
         
 done
