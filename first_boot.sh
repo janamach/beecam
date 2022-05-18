@@ -1,7 +1,7 @@
 sudo apt update
 sudo apt install -y gpac yad
 git clone https://github.com/janamach/beecam.git
-echo bash ~/beecam/recorder.sh > .profile
+echo bash ~/beecam/recorder.sh >> .profile
 echo "Expand file system"
 sudo raspi-config
 
