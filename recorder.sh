@@ -127,4 +127,6 @@ while true; do
     yad --info --center --borders=20 \
         --button="<big><big><big><big>Poweroff</big></big></big></big>":"poweroff" \
         --button="<big><big><big><big>Back</big></big></big></big>"
+        --button="<big><big><big><big>Reboot</big></big></big></big>":"reboot" \
+        
 done
