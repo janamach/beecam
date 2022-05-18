@@ -85,7 +85,7 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=80 --posy=225 \
+yad --timeout-indicator=top --posx=70 --posy=225 \
     --timeout=$((ans * 60 + 5)) \
     --text="<big> Recording ${VID_DIR}/bees_${FNUMBER}.h264 </big>" \
     --button 'Cancel video recording:killall raspivid & killall yad'  & \
