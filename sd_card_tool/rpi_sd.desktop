@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=SD Card Tool
-Exec=$HOME/sd_card_script/rpi_sd.sh
-Icon=$HOME/sd_card_script/bee.png
+Exec=$HOME/src/beecam/sd_card_tool/rpi_sd.sh
+Icon=$HOME/src/beecam/sd_card_tool/bee.png
 Type=Application
