@@ -3,7 +3,7 @@
 # echo "bash ~/first_boot_LCD35.sh" > .profile
 
 sudo apt update
-sudo apt dist-upgrade
+sudo apt dist-upgrade -y
 
 cd beecam
 git pull
