@@ -8,6 +8,8 @@
 ### To  deisable bluetooth and wifi, add this to '/boot/config.txt':
 ### dtoverlay=pi3-disable-wifi
 ### dtoverlay=pi3-disable-bt
+## Disable screensaved by editing /etc/lightdm/lightdm.conf and replacing
+## `xserver-command=X` with `xserver-command=X -s 0 -p 0 -dpms`
 
 # Edit for video settings
 
