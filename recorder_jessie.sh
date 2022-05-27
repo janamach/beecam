@@ -72,7 +72,7 @@ if [ -b /dev/sd*1 ]; then
     USB_DRIVE=$(echo /dev/sd*1)
     sudo mount $USB_DRIVE $HOME/usb -o umask=000
     VID_DIR=$HOME/usb
-    VID_LOC="USB stick"
+    VID_LOC="USB"
     ls $VID_DIR
 else
     VID_DIR=$HOME/Videos
@@ -87,18 +87,19 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=90 --posy=225 \
+yad --timeout-indicator=top --posx=90 --posy=230 \
     --timeout=$((ans * 60 + 5)) \
     --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,225 -o ${VID_DIR}/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,230 -o ${VID_DIR}/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
+    yad --info --center --text="<big><big><big><b>Converting to mp4.\n\nPlease wait...</b></big></big></big>" --button="OK" &\
     MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
     yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
         --title="Info" \
-        --button="<big><big><big><big>OK</big></big></big></big>" --borders=20
+        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
 fi
 
 sudo umount $HOME
