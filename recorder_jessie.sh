@@ -16,6 +16,7 @@
 video_width=1640
 video_height=1232
 fps=30
+saturation=-100
 
 # video_width=1920 video_height=1080
 # fps=90 video_width=640 video_height=480
@@ -94,7 +95,7 @@ yad --timeout-indicator=top --posx=90 --posy=245 \
     --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa -100 -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
     yad --info --center --text="<big><big><big><b>Converting to mp4.\n\nPlease wait...</b></big></big></big>" --button="OK" &\
