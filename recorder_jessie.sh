@@ -90,7 +90,7 @@ echo ${FNUMBER} > count
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=90 --posy=245 \
+yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
     --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
@@ -101,7 +101,7 @@ if $convert_to_mp4 ; then
     yad --info --center --text="<big><big><big><b>Converting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
     MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
     yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
-        --title="Info" \
+        --title="Info" --text-align=center \
         --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
 fi
 
