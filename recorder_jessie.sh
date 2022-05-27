@@ -16,7 +16,7 @@
 video_width=1640
 video_height=1232
 fps=30
-saturation=-100
+saturation=-100 # For black and white use -100. default is 0
 
 # video_width=1920 video_height=1080
 # fps=90 video_width=640 video_height=480
