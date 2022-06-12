@@ -17,12 +17,12 @@ video_width=1280
 video_height=720
 fps=50
 saturation=-100 # For black and white use -100. default is 0
-exposure_mode="sports"
+exposure_mode="off"
 
 # video_width=1920 video_height=1080
 # fps=90 video_width=640 video_height=480
 
-bitrate=1500000
+bitrate=10000000
 
 convert_to_mp4=true
 mp4_fps=$fps
@@ -96,7 +96,7 @@ yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -ISO 800 -ss 10000 -co 10 -sh 100 -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
     yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
