@@ -51,6 +51,10 @@ if ! [[ $video_width =~ $re ]] ; then
     else
         break
     fi
+elif [[ $video_width = 1640 ]] ; then
+    video_width = 1232
+else
+    video_width = 400
 fi
 
 VLENGTH=$((TIME_MIN * 60000))
