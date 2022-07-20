@@ -40,8 +40,8 @@ while true; do
 ### Quit if "Quit" is pressed
 re='^[0-9]+$'
 
-if ! [[ $ans =~ $re ]] ; then
-    if [[ $ans = "Focus" ]] ; then
+if ! [[ $video_width =~ $re ]] ; then
+    if [[ $video_width = "Focus" ]] ; then
         raspivid -t 100000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 & \
         yad --info --timeout=100 --posy=273 \
             --button="<big><big><big><b>Close this window</b></big></big></big>":"killall raspivid & killall yad"
