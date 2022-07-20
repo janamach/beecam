@@ -30,7 +30,7 @@ EXTRA_PARAM="" #"-ISO 800 -ss 10000 -co 10 -sh 100"
 main () {
 while true; do
   video_width=$(zenity --info --title 'Record a video' \
-      --text 'Choose video duration in minutes' \
+      --text 'Choose video width' \
       --ok-label Quit \
       --extra-button 1640 \
       --extra-button 1280 \
@@ -53,8 +53,10 @@ if ! [[ $video_width =~ $re ]] ; then
     fi
 elif [[ $video_width = 1640 ]] ; then
     export video_height=1232
+elif [[ $video_width = 1280 ]] ; then
+    export video_height=720
 else
-    export video_height=400
+    export video_height=1080
 fi
 
 VLENGTH=$((TIME_MIN * 60000))
