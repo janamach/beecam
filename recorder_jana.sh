@@ -54,7 +54,7 @@ fi
 
 VLENGTH=$((TIME_MIN * 60000))
 # echo ${VLENGTH} > ans
-VID_DIR="~/Videos/"
+VID_DIR="/home/pi/Videos/"
 FNUMBER="`date +%Y%m%d_%H%M%S`"
 
 yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
