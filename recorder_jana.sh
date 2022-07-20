@@ -52,10 +52,9 @@ if ! [[ $video_width =~ $re ]] ; then
         break
     fi
 elif [[ $video_width = 1640 ]] ; then
-    video_height = 1232
-    break
+    export video_height=1232
 else
-    video_height = 400
+    export video_height=400
 fi
 
 VLENGTH=$((TIME_MIN * 60000))
