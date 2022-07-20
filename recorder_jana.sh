@@ -14,7 +14,7 @@
 # Edit for video settings
 
 fps=25
-saturation=-100 # For black and white use -100. default is 0
+saturation=0 # For black and white use -100. default is 0
 exposure_mode="auto"
 
 # video_width=1920 video_height=1080
