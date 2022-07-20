@@ -26,17 +26,14 @@ TIME_MIN=180
 convert_to_mp4=true
 mp4_fps=$fps
 
-# Edit for file numbering
-count_from=1000
-
 main () {
 while true; do
-  ans=$(zenity --info --title 'Record a video' \
+  video_width=$(zenity --info --title 'Record a video' \
       --text 'Choose video duration in minutes' \
       --ok-label Quit \
-      --extra-button 90 \
-      --extra-button 30 \
-      --extra-button 1 \
+      --extra-button 1640 \
+      --extra-button 1280 \
+      --extra-button 1920 \
       --extra-button "Focus" \
        )
 
