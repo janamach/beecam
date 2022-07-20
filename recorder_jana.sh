@@ -52,9 +52,9 @@ if ! [[ $video_width =~ $re ]] ; then
         break
     fi
 elif [[ $video_width = 1640 ]] ; then
-    video_width = 1232
+    video_height = 1232
 else
-    video_width = 400
+    video_height = 400
 fi
 
 VLENGTH=$((TIME_MIN * 60000))
@@ -67,7 +67,7 @@ yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --text="<big><big><b><span color='red'>${FNUMBER}.h264</span></b></big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} ${EXTRA_PARAM} -w ${video_width} -p 0,0,480,245 -o ${VID_DIR}/${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} ${EXTRA_PARAM} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/${FNUMBER}.h264
 
 if $convert_to_mp4 ; then
     yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
@@ -83,22 +83,6 @@ done
 }
 
 export -f main
-
-copy_to_usb() {
-if [ -b /dev/sd*1 ]; then
-    USB_DRIVE=$(echo /dev/sd*1)
-    sudo mount $USB_DRIVE $HOME/usb -o umask=000
-    yad --info --text="<big><big>Copying video files to USB drive.\nDo not unplug.</big></big>"
-    cp ~/Videos/*mp4 ~/usb
-    mkdir ~/Videos_${FNUMBER}
-    mv ~/Videos/*.* ~/Videos_${FNUMBER}
-    yad --info --text="<big><big>Copying complete. \n\nSafe to unplug.</big></big>"
-else
-    yad --info --text="No USB drive detected"
-fi
-}
-
-export -f copy_to_usb
 
 while true; do
     main
