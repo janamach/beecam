@@ -53,6 +53,7 @@ if ! [[ $video_width =~ $re ]] ; then
     fi
 elif [[ $video_width = 1640 ]] ; then
     video_height = 1232
+    break
 else
     video_height = 400
 fi
@@ -76,8 +77,6 @@ if $convert_to_mp4 ; then
         --title="Info" --text-align=center \
         --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
 fi
-
-sudo umount $HOME
 
 done
 }
