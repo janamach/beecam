@@ -13,7 +13,7 @@
 
 # Edit for video settings
 
-fps=25
+fps=30
 saturation=0 # For black and white use -100. default is 0
 exposure_mode="auto"
 
@@ -23,7 +23,7 @@ exposure_mode="auto"
 bitrate=10000000
 TIME_MIN=180
 
-convert_to_mp4=true
+convert_to_mp4=false
 mp4_fps=$fps
 EXTRA_PARAM="" #"-ISO 800 -ss 10000 -co 10 -sh 100"
 
@@ -62,7 +62,7 @@ fi
 VLENGTH=$((TIME_MIN * 60000))
 # echo ${VLENGTH} > ans
 VID_DIR="/home/pi/Videos/"
-FNUMBER="`date +%Y%m%d_%H%M%S`"
+FNUMBER="`date +%Y%m%d_%H%M%S`_${fps}_fps"
 
 yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((TIME_MIN * 60 + 5)) \
