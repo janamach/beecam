@@ -13,7 +13,7 @@
 
 # Edit for video settings
 
-fps=30
+fps=25
 saturation=0 # For black and white use -100. default is 0
 exposure_mode="auto"
 
