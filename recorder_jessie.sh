@@ -62,21 +62,25 @@ record_video () {
     echo ${FNUMBER} > count
     echo ${FNUMBER}
     VLENGTH=$((ans * 60000))
+    export FNUMBER
     yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
     --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
     --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
 
 raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
+}
 
-if $convert_to_mp4 ; then
+convert_video () {
     yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
     MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
+    if [[ $ans = "Timer" ]] ; then
+        echo "Coverted to mp4"
+    else
     yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
         --title="Info" --text-align=center \
         --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
-fi
-
+    fi
 }
 export -f record_video
 
@@ -161,7 +165,7 @@ while true; do
 
 ### Quit if "Quit" is pressed
 re='^[0-9]+$'
-
+export ans
 if ! [[ $ans =~ $re ]] ; then
     if [[ $ans = "Focus" ]] ; then
         raspivid -t 100000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 & \
@@ -189,6 +193,9 @@ VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
 record_video
+if $convert_to_mp4 ; then
+convert_video
+fi
 done
 }
 
