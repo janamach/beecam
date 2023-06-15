@@ -80,10 +80,10 @@ export -f record_video
 set_timer () {
 # Read the count file by line:
     array=($(yad \
-        --item-separator="," --separator="\\n" --form --columns 2 \
-        --field="Timer\\n(min)":NUM $TIMERN,1..1000,1 \
-        --field="Video length\\n(min)":NUM $VIDN,1..1000,1 \
-        --field="Repeat\\n(times)":NUM $REPEATN,1..1000,1 \
+        --item-separator="," --separator="\\n" --form --columns 2 --center --borders=20 \
+        --field="<big><b>Timer\\n(min)</b></big>":NUM $TIMERN,1..1000,1 \
+        --field="<big><b>Video length\\n(min)</b></big>":NUM $VIDN,1..1000,1 \
+        --field="<big><b>Repeat\\n(times)</b></big>":NUM $REPEATN,1..1000,1 \
         --field="Save default values":CHK FALSE \
         ))
     TIMERN=${array[0]}
@@ -106,7 +106,7 @@ timer_window
 export -f set_timer
 
 timer_window () {
-        ans2=$(yad --text="<big><b>Timer: <span color='red'>${TIMERN}</span> minutes.\\nVideo length: ${VIDN} minutes. \
+        ans2=$(yad  --center --borders=20 --text="<big><b>Timer: <span color='red'>${TIMERN}</span> minutes.\\nVideo length: ${VIDN} minutes. \
         \\nWill be recorder ${REPEATN} times.</b></big>" \
         --button="Cancel":0 --button="Change timer":1 --button="Start recording":2)
         ans2=$?
@@ -118,7 +118,7 @@ timer_window () {
             set_timer
         elif [[ $ans2 == 2 ]]; then
             # Show timeout indicator
-            $(yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
+            $(yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center  --center --borders=20  \
             --timeout=$((TIMERN * 60 + 5)) \
             --text="<big><big><b>Waiting for ${TIMERN} minutes</b></big></big>" \
             --button="<big><big><b>Cancel video recording</b></big></big>:0")
