@@ -30,12 +30,85 @@ mp4_fps=$fps
 # Edit for file numbering
 count_from=1000
 
+### Create "times" file for counting if does not exist
+create_timer_file () {
+        echo $((60)) > timer
+        echo $((30)) >> timer
+        echo $((10)) >> timer
+}
+
+if [ -f timer ]; then
+    echo "Timer file exists."
+# Check if the file is 3 lines long
+    if [ $(wc -l < timer) -eq 3 ]; then
+        echo "Timer file is three lines long."
+    else
+        echo "count file is not two lines long. Creating ..."
+        create_timer_file
+    fi
+else
+    echo "count file does not exist. Creating ..."
+    create_timer_file
+fi
+
+TIMERN=$(sed -n '1p' timer)
+VIDN=$(sed -n '2p' timer)
+REPEATN=$(sed -n '3p' timer)
+
+set_timer () {
+# Read the count file by line:
+    array=($(yad \
+        --item-separator="," --separator="\\n" --form --columns 2 \
+        --field="Timer\\n(min)":NUM $TIMERN,1..1000,1 \
+        --field="Video length\\n(min)":NUM $VIDN,1..1000,1 \
+        --field="Repeat\\n(times)":NUM $REPEATN,1..1000,1 \
+        --field="Save default values":CHK FALSE \
+        ))
+    TIMERN=${array[0]}
+    VIDN=${array[1]}
+    REPEATN=${array[2]}
+    declare -p array
+    if [ ${array[3]} = "TRUE" ]; then
+        echo "Remembering timer value"
+        echo $TIMERN > timer
+        echo $VIDN >> timer
+        echo $REPEATN >> timer
+    else
+        echo "Not remembering timer value"
+    fi
+export TIMERN
+export VIDN
+timer_window
+}
+export -f set_timer
+
+timer_window () {
+        ans2=$(yad --text="<big><b>Timer: <span color='red'>${TIMERN}</span> minutes.\\nVideo length: ${VIDN} minutes. \
+        \\nWill be recorder ${REPEATN} times.</b></big>" \
+        --button="Cancel":0 --button="Change timer":1 --button="Start recording":2)
+        ans2=$?
+        echo $ans2
+        if [[ $ans2 == 1 ]]; then
+            set_timer
+        elif [[ $ans2 == 2 ]]; then
+            # Show countdown timer window starting at TIMERN
+            yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
+                --timeout=$((TIMERN * 60 + 5)) \
+                --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
+                --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
+        else
+            main
+            break
+        fi
+}
+export -f timer_window
+
 main () {
 while true; do
   ans=$(zenity --info --title 'Record a video' \
       --text 'Choose video duration in minutes' \
       --ok-label Quit \
-      --extra-button 90 \
+      --extra-button "Timer" \
       --extra-button 30 \
       --extra-button 1 \
       --extra-button "Focus" \
@@ -51,7 +124,10 @@ if ! [[ $ans =~ $re ]] ; then
             --button="<big><big><big><b>Close this window</b></big></big></big>":"killall raspivid & killall yad"
         main
         break
+    elif [[ $ans = "Timer" ]] ; then
+        timer_window
     else
+        yad --info --text="Please enter a number" --timeout=5
         break
     fi
 fi
@@ -63,30 +139,6 @@ else
     echo "count file does not exist. Creating ..."
     echo ${count_from} > count
 fi
-
-### Write into USB if available
-
-if [ -d $HOME/usb ]; then
-    echo "$HOME/usb exists"
-else
-    mkdir ~/usb
-fi
-
-if [ -b /dev/sd*1 ]; then
-    USB_DRIVE=$(echo /dev/sd*1)
-    sudo mount $USB_DRIVE $HOME/usb -o umask=000
-    VID_DIR=$HOME/usb
-    VID_LOC="USB"
-    ls $VID_DIR
-else
-    VID_DIR=$HOME/Videos
-    VID_LOC="SD card"
-fi
-
-### Add 1 to count
-FNUMBER=$(< count)
-FNUMBER=$((FNUMBER + 1))
-echo ${FNUMBER} > count
 
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
@@ -112,22 +164,6 @@ done
 }
 
 export -f main
-
-copy_to_usb() {
-if [ -b /dev/sd*1 ]; then
-    USB_DRIVE=$(echo /dev/sd*1)
-    sudo mount $USB_DRIVE $HOME/usb -o umask=000
-    yad --info --text="<big><big>Copying video files to USB drive.\nDo not unplug.</big></big>"
-    cp ~/Videos/*mp4 ~/usb
-    mkdir ~/Videos_${FNUMBER}
-    mv ~/Videos/*.* ~/Videos_${FNUMBER}
-    yad --info --text="<big><big>Copying complete. \n\nSafe to unplug.</big></big>"
-else
-    yad --info --text="No USB drive detected"
-fi
-}
-
-export -f copy_to_usb
 
 while true; do
     main
