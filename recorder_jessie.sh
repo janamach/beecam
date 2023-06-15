@@ -54,6 +54,7 @@ fi
 TIMERN=$(sed -n '1p' timer)
 VIDN=$(sed -n '2p' timer)
 REPEATN=$(sed -n '3p' timer)
+VID_DIR=$HOME/Videos
 
 record_video () {
     FNUMBER=$(< count)
@@ -120,12 +121,14 @@ timer_window () {
             set_timer
         elif [[ $ans2 == 2 ]]; then
             # Show timeout indicator
-            yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
+            $(yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
             --timeout=$((TIMERN)) \
             --text="<big><big><b>Waiting for ${TIMERN} minutes</b></big></big>" \
-            --button '<big><big><b>Cancel video recording</b></big></big>:0'
-            echo $?
-            if [[ $? == 0 ]]; then
+            --button="<big><big><b>Cancel video recording</b></big></big>:0")
+            ans3=$?
+            echo ${ans3}
+            
+            if [[ $ans3 == 0 ]]; then
                 main
                 break
             fi
