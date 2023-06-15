@@ -119,7 +119,7 @@ timer_window () {
         elif [[ $ans2 == 2 ]]; then
             # Show timeout indicator
             $(yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
-            --timeout=$((TIMERN)) \
+            --timeout=$((TIMERN * 60 + 5)) \
             --text="<big><big><b>Waiting for ${TIMERN} minutes</b></big></big>" \
             --button="<big><big><b>Cancel video recording</b></big></big>:0")
             ans3=$?
@@ -138,6 +138,7 @@ timer_window () {
                 record_video
                 convert_video
             done
+            main
         else
             main
             break
