@@ -73,13 +73,7 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps
 
 convert_video () {
     MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && 
-    if [[ $ans = "Timer" ]] ; then
-        echo "Coverted to mp4"
-    else
-    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
-        --title="Info" --text-align=center \
-        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
-    fi
+    echo "Coverted to mp4"
 }
 export -f record_video
 
@@ -196,6 +190,9 @@ record_video
 if $convert_to_mp4 ; then
     yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
 convert_video
+    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
+        --title="Info" --text-align=center \
+        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
 fi
 done
 }
