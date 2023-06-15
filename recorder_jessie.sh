@@ -72,8 +72,7 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps
 }
 
 convert_video () {
-    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
-    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
+    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && 
     if [[ $ans = "Timer" ]] ; then
         echo "Coverted to mp4"
     else
@@ -143,6 +142,7 @@ timer_window () {
             for (( c=1; c<=$REPEATN; c++ )); do
                 echo "Recording video $c of $REPEATN"
                 record_video
+                convert_video
             done
         else
             main
@@ -194,6 +194,7 @@ VLENGTH=$((ans * 60000))
 
 record_video
 if $convert_to_mp4 ; then
+    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
 convert_video
 fi
 done
