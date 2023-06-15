@@ -55,6 +55,30 @@ TIMERN=$(sed -n '1p' timer)
 VIDN=$(sed -n '2p' timer)
 REPEATN=$(sed -n '3p' timer)
 
+record_video () {
+    FNUMBER=$(< count)
+    FNUMBER=$((FNUMBER + 1))
+    echo ${FNUMBER} > count
+    echo ${FNUMBER}
+    VLENGTH=$((ans * 60000))
+    yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
+    --timeout=$((ans * 60 + 5)) \
+    --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
+    --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
+
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
+
+if $convert_to_mp4 ; then
+    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
+    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
+    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
+        --title="Info" --text-align=center \
+        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
+fi
+
+}
+export -f record_video
+
 set_timer () {
 # Read the count file by line:
     array=($(yad \
@@ -78,6 +102,7 @@ set_timer () {
     fi
 export TIMERN
 export VIDN
+export REPEATN
 timer_window
 }
 export -f set_timer
@@ -87,20 +112,37 @@ timer_window () {
         \\nWill be recorder ${REPEATN} times.</b></big>" \
         --button="Cancel":0 --button="Change timer":1 --button="Start recording":2)
         ans2=$?
+        export TIMERN
+        export VIDN
+        export REPEATN
         echo $ans2
         if [[ $ans2 == 1 ]]; then
             set_timer
         elif [[ $ans2 == 2 ]]; then
-            # Show countdown timer window starting at TIMERN
+            # Show timeout indicator
             yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
-                --timeout=$((TIMERN * 60 + 5)) \
-                --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
-                --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
+            --timeout=$((TIMERN)) \
+            --text="<big><big><b>Waiting for ${TIMERN} minutes</b></big></big>" \
+            --button '<big><big><b>Cancel video recording</b></big></big>:0'
+            echo $?
+            if [[ $? == 0 ]]; then
+                main
+                break
+            fi
+            echo "Timer finished"
+            ans=$VIDN
+            export ans
+            echo $ans
+            for (( c=1; c<=$REPEATN; c++ )); do
+                echo "Recording video $c of $REPEATN"
+                record_video
+            done
         else
             main
             break
         fi
 }
+
 export -f timer_window
 
 main () {
@@ -126,8 +168,8 @@ if ! [[ $ans =~ $re ]] ; then
         break
     elif [[ $ans = "Timer" ]] ; then
         timer_window
+        break
     else
-        yad --info --text="Please enter a number" --timeout=5
         break
     fi
 fi
@@ -143,23 +185,7 @@ fi
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
 
-yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
-    --timeout=$((ans * 60 + 5)) \
-    --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
-    --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
-
-raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
-
-if $convert_to_mp4 ; then
-    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
-    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && \
-    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
-        --title="Info" --text-align=center \
-        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
-fi
-
-sudo umount $HOME
-
+record_video
 done
 }
 
