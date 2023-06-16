@@ -57,7 +57,6 @@ REPEATN=$(sed -n '3p' timer)
 VID_DIR=$HOME/Videos
 
 record_video () {
-    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
     FNUMBER=$(< count)
     FNUMBER=$((FNUMBER + 1))
     echo ${FNUMBER} > count
@@ -77,7 +76,7 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps
 
 convert_video () {
     yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
-    MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4
+    MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4 && killall yad
     # yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>${FILENAME}.mp4</b></span></big></big></big></big>" \
     #     --title="Info" --text-align=center \
     #     --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
@@ -138,20 +137,25 @@ timer_window () {
                 break
             fi
             echo "Timer finished"
+            DATE=`date +%s`
             ans=$VIDN
             export ans
             echo $ans
             rm videos
             for (( c=1; c<=$REPEATN; c++ )); do
+                DATE1=`date +%s`
+                TIMESTAMP=$((DATE1-DATE))
+                echo ${FILENAME}.mp4 >> videos
+                export TIMESTAMP
                 echo "Recording video $c of $REPEATN"
                 record_video
                 # Add FILENAME to the list of videos
-                echo ${FILENAME}.mp4 >> videos
             done
             for video in $(cat videos); do
                 echo "Converting $video"
                 convert_video
             done
+            rm videos
             main
         else
             main
@@ -200,7 +204,8 @@ fi
 
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
-
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+export TIMESTAMP
 record_video
 if $convert_to_mp4 ; then
 convert_video
