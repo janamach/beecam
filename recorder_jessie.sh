@@ -150,7 +150,7 @@ timer_window () {
                 TIMESTAMP=$((DATE1-DATE))
                 FILENAME=bees_${FNUMBER}_${c}_of_${REPEATN}_${TIMESTAMP}
                 export FILENAME
-                echo ${FILENAME}.mp4 >> videos
+                echo ${FILENAME} >> videos
                 export TIMESTAMP
                 echo "Recording video $c of $REPEATN"
                 record_video
@@ -159,6 +159,7 @@ timer_window () {
             for video in $(cat videos); do
                 echo "Converting $video"
                 FILENAME=$video
+                export FILENAME
                 convert_video
             done
             rm videos
