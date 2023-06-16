@@ -76,11 +76,11 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps
 }
 
 convert_video () {
-        yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
-    MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4 && 
-    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>${FILENAME}.mp4</b></span></big></big></big></big>" \
-        --title="Info" --text-align=center \
-        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
+    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
+    MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4
+    # yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>${FILENAME}.mp4</b></span></big></big></big></big>" \
+    #     --title="Info" --text-align=center \
+    #     --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
     echo "Coverted to mp4"
 }
 export -f record_video
