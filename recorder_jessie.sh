@@ -56,14 +56,15 @@ VIDN=$(sed -n '2p' timer)
 REPEATN=$(sed -n '3p' timer)
 VID_DIR=$HOME/Videos
 
-record_video () {
+countn () {
     FNUMBER=$(< count)
     FNUMBER=$((FNUMBER + 1))
     echo ${FNUMBER} > count
-    echo ${FNUMBER}
-    FILENAME=bees_${FNUMBER}_${TIMESTAMP}
+    export FNUMBER
+}
+
+record_video () {
     VLENGTH=$((ans * 60000))
-    export FILENAME
     yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
     --text="<big><b><span color='red'>${FILENAME}.h264</span></b></big>" \
@@ -75,7 +76,7 @@ raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps
 }
 
 convert_video () {
-    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
+    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\n<span color='red'>${FILENAME}.h264</span>\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
     MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4 && killall yad
     # yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>${FILENAME}.mp4</b></span></big></big></big></big>" \
     #     --title="Info" --text-align=center \
@@ -143,8 +144,12 @@ timer_window () {
             echo $ans
             rm videos
             for (( c=1; c<=$REPEATN; c++ )); do
+                countn
+                echo $c
                 DATE1=`date +%s`
                 TIMESTAMP=$((DATE1-DATE))
+                FILENAME=bees_${FNUMBER}_${c}_of_${REPEATN}_${TIMESTAMP}
+                export FILENAME
                 echo ${FILENAME}.mp4 >> videos
                 export TIMESTAMP
                 echo "Recording video $c of $REPEATN"
@@ -153,10 +158,13 @@ timer_window () {
             done
             for video in $(cat videos); do
                 echo "Converting $video"
+                FILENAME=$video
                 convert_video
             done
             rm videos
+            killall yad
             main
+            break
         else
             main
             break
@@ -204,8 +212,10 @@ fi
 
 VLENGTH=$((ans * 60000))
 # echo ${VLENGTH} > ans
+countn
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-export TIMESTAMP
+FILENAME=bees_${FNUMBER}_${TIMESTAMP}
+export FILENAME
 record_video
 if $convert_to_mp4 ; then
 convert_video
