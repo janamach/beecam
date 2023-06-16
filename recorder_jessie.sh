@@ -57,22 +57,30 @@ REPEATN=$(sed -n '3p' timer)
 VID_DIR=$HOME/Videos
 
 record_video () {
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
     FNUMBER=$(< count)
     FNUMBER=$((FNUMBER + 1))
     echo ${FNUMBER} > count
     echo ${FNUMBER}
+    FILENAME=bees_${FNUMBER}_${TIMESTAMP}
     VLENGTH=$((ans * 60000))
-    export FNUMBER
+    export FILENAME
     yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
-    --text="<big><big><b><span color='red'>bees_${FNUMBER}.h264</span></b> on ${VID_LOC}</big></big>" \
-    --button '<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad'  & \
+    --text="<big><big><b><span color='red'>${FILENAME}.h264</span></b> on ${VID_LOC}</big></big>" \
+    --button "<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad & exit"  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 -o ${VID_DIR}/bees_${FNUMBER}.h264
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 \
+ -o ${VID_DIR}/${FILENAME}.h264
+
 }
 
 convert_video () {
-    MP4Box -add ${VID_DIR}/bees_${FNUMBER}.h264:fps=${mp4_fps} ${VID_DIR}/bees_${FNUMBER}.mp4 && 
+        yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
+    MP4Box -add ${VID_DIR}/${FILENAME}.h264:fps=${mp4_fps} ${VID_DIR}/${FILENAME}.mp4 && 
+    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>${FILENAME}.mp4</b></span></big></big></big></big>" \
+        --title="Info" --text-align=center \
+        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
     echo "Coverted to mp4"
 }
 export -f record_video
@@ -81,7 +89,7 @@ set_timer () {
 # Read the count file by line:
     array=($(yad \
         --item-separator="," --separator="\\n" --form --columns 2 --center --borders=20 \
-        --field="<big><b>Timer\\n(min)</b></big>":NUM $TIMERN,1..1000,1 \
+        --field="<big><b>Delay\\n(min)</b></big>":NUM $TIMERN,0..1000,1 \
         --field="<big><b>Video length\\n(min)</b></big>":NUM $VIDN,1..1000,1 \
         --field="<big><b>Repeat\\n(times)</b></big>":NUM $REPEATN,1..1000,1 \
         --field="Save default values":CHK FALSE \
@@ -106,9 +114,9 @@ timer_window
 export -f set_timer
 
 timer_window () {
-        ans2=$(yad  --center --borders=20 --text="<big><b>Timer: <span color='red'>${TIMERN}</span> minutes.\\nVideo length: ${VIDN} minutes. \
+        ans2=$(yad  --center --borders=20 --text="<big><b>Delay before first redcording: <span color='red'>${TIMERN}</span> minutes.\\nVideo length: ${VIDN} minutes. \
         \\nWill be recorder ${REPEATN} times.</b></big>" \
-        --button="Cancel":0 --button="Change timer":1 --button="Start recording":2)
+        --button="Cancel":0 --button="Change settings":1 --button="Start recording":2)
         ans2=$?
         export TIMERN
         export VIDN
@@ -119,7 +127,7 @@ timer_window () {
         elif [[ $ans2 == 2 ]]; then
             # Show timeout indicator
             $(yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center  --center --borders=20  \
-            --timeout=$((TIMERN * 60 + 5)) \
+            --timeout=$((TIMERN * 60 + 1)) \
             --text="<big><big><b>Waiting for ${TIMERN} minutes</b></big></big>" \
             --button="<big><big><b>Cancel video recording</b></big></big>:0")
             ans3=$?
@@ -133,9 +141,15 @@ timer_window () {
             ans=$VIDN
             export ans
             echo $ans
+            rm videos
             for (( c=1; c<=$REPEATN; c++ )); do
                 echo "Recording video $c of $REPEATN"
                 record_video
+                # Add FILENAME to the list of videos
+                echo ${FILENAME}.mp4 >> videos
+            done
+            for video in $(cat videos); do
+                echo "Converting $video"
                 convert_video
             done
             main
@@ -189,11 +203,7 @@ VLENGTH=$((ans * 60000))
 
 record_video
 if $convert_to_mp4 ; then
-    yad --info --center --text="<big><big><big><b>\nConverting to mp4.\n\nPlease wait...</b></big></big></big>" --no-buttons --text-align=center --borders=20 &\
 convert_video
-    yad --info --center --text "<big><big><big><big>Video converted to \n\n<span color='red'><b>bees_${FNUMBER}.mp4</b></span></big></big></big></big>" \
-        --title="Info" --text-align=center \
-        --button="<big><big><big><big>OK</big></big></big></big>:killall yad" --borders=20
 fi
 done
 }
