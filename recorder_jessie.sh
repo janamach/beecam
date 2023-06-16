@@ -67,8 +67,8 @@ record_video () {
     export FILENAME
     yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
-    --text="<big><big><b><span color='red'>${FILENAME}.h264</span></b> on ${VID_LOC}</big></big>" \
-    --button "<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad & exit"  & \
+    --text="<big><b><span color='red'>${FILENAME}.h264</span></b></big>" \
+    --button="<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad & exit"  & \
 
 raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 \
  -o ${VID_DIR}/${FILENAME}.h264
