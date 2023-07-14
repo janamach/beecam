@@ -15,6 +15,7 @@
 
 video_width=1280
 video_height=720
+rotation_degrees=180
 fps=50
 saturation=-100 # For black and white use -100. default is 0
 exposure_mode="auto"
@@ -70,7 +71,7 @@ record_video () {
     --text="<big><b><span color='red'>${FILENAME}.h264</span></b></big>" \
     --button="<big><big><b>Cancel video recording</b></big></big>:killall raspivid & killall yad & exit"  & \
 
-raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -w ${video_width} -h ${video_height} -p 0,0,480,245 \
+raspivid -t ${VLENGTH} -b ${bitrate} -sa ${saturation} -ex ${exposure_mode} -fps ${fps} -rot ${rotation_degrees} -w ${video_width} -h ${video_height} -p 0,0,480,245 \
  -o ${VID_DIR}/${FILENAME}.h264
 
 }
