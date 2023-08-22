@@ -182,7 +182,7 @@ while true; do
       --ok-label Quit \
       --extra-button "Timer" \
       --extra-button 30 \
-      --extra-button 1 \
+      --extra-button "Photo" \
       --extra-button "Focus" \
        )
 
@@ -194,6 +194,15 @@ if ! [[ $ans =~ $re ]] ; then
         raspivid -t 100000 -w 1920 -h 1080 --roi 0.6,0.5,0.25,0.25 -p 0,0,480,270 & \
         yad --info --timeout=100 --posy=273 \
             --button="<big><big><big><b>Close this window</b></big></big></big>":"killall raspivid & killall yad"
+        main
+        break
+    elif [[ $ans = "Photo" ]] ; then
+        FNUMBER=$(< count)
+        FNUMBER=$((FNUMBER + 1))
+        echo ${FNUMBER} > count
+        raspistill -sa -100 -t 10800000 -tl 10000 -p 0,0,370,245 -rot 180 -o ~/Pictures/image${FNUMBER}_%04d.jpg & \
+        yad --info --posy=273 \
+            --button="<big><big><big><b>Cancel</b></big></big></big>":"killall raspistill & killall yad"
         main
         break
     elif [[ $ans = "Timer" ]] ; then
