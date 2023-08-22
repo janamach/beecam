@@ -200,7 +200,7 @@ if ! [[ $ans =~ $re ]] ; then
         FNUMBER=$(< count)
         FNUMBER=$((FNUMBER + 1))
         echo ${FNUMBER} > count
-        raspistill -sa -100 -t 10800000 -tl 10000 -p 0,0,370,245 -rot 180 -o ~/Pictures/image${FNUMBER}_%04d.jpg & \
+        raspistill -sa -100 -t 10800000000 -tl 10000 -p 0,0,370,245 -rot 180 -o ~/Pictures/image${FNUMBER}_%04d.jpg & \
         yad --info --posy=273 \
             --button="<big><big><big><b>Cancel</b></big></big></big>":"killall raspistill & killall yad"
         main
