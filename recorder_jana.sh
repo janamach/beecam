@@ -13,7 +13,7 @@
 
 # Edit for video settings
 
-fps=25
+fps=15
 saturation=0 # For black and white use -100. default is 0
 exposure_mode="auto"
 
@@ -32,7 +32,7 @@ while true; do
   video_width=$(zenity --info --title 'Record a video' \
       --text 'Choose video width' \
       --ok-label Quit \
-      --extra-button 1640 \
+      --extra-button 3280 \
       --extra-button 1280 \
       --extra-button 1920 \
       --extra-button "Focus" \
@@ -51,8 +51,8 @@ if ! [[ $video_width =~ $re ]] ; then
     else
         break
     fi
-elif [[ $video_width = 1640 ]] ; then
-    export video_height=1232
+elif [[ $video_width = 3280 ]] ; then
+    export video_height=2464
 elif [[ $video_width = 1280 ]] ; then
     export video_height=720
 else
