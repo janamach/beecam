@@ -65,6 +65,7 @@ countn () {
 }
 
 record_video () {
+    sleep 3 && python3 led.py & \
     VLENGTH=$((ans * 60000))
     yad --timeout-indicator=top --posx=90 --posy=245 --text-align=center \
     --timeout=$((ans * 60 + 5)) \
@@ -154,7 +155,6 @@ timer_window () {
                 echo ${FILENAME} >> videos
                 export TIMESTAMP
                 echo "Recording video $c of $REPEATN"
-                sleep 3 && python3 led.py & \
                 record_video
                 # Add FILENAME to the list of videos
             done
