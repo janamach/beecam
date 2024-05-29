@@ -154,6 +154,7 @@ timer_window () {
                 echo ${FILENAME} >> videos
                 export TIMESTAMP
                 echo "Recording video $c of $REPEATN"
+                sleep 3 && python3 led.py & \
                 record_video
                 # Add FILENAME to the list of videos
             done
